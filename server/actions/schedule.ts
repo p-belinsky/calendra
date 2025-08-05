@@ -21,13 +21,16 @@ export type FullSchedule = ScheduleRow & {
     availabilities: AvailabilityRow[]
 }
 
-export async function getSchedule(userId:string): Promise<FullSchedule> {
+export async function getSchedule(userId:string): Promise<FullSchedule | null> {
     const schedule = await db.query.ScheduleTable.findFirst({
         where: ({clerkUserId}, {eq}) => eq(clerkUserId, userId),
         with: {
             availabilities: true
         }
     })
+    if(!schedule) {
+        return null
+    }
 
     return schedule as FullSchedule
 }
